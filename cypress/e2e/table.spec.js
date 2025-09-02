@@ -6,6 +6,28 @@
 // https://on.cypress.io/writing-first-test
 
 describe('table', () => {
+    it('暗色模式下hover行时，fixed和普通列背景色应一致', () => {
+        cy.visit('http://127.0.0.1:6006/iframe.html?id=table--fixed-hover-bg-dark-mode-demo&args=&viewMode=story');
+        cy.get('body').should('have.class', 'semi-design-dark');
+        cy.get('.semi-table-tbody .semi-table-row').eq(1).trigger('mouseover');
+        cy.get('.semi-table-row').eq(1).within(() => {
+            cy.get('.semi-table-cell-fixed-left').then($fixedCell => {
+                const fixedBg = $fixedCell.css('background-color');
+                cy.get('.semi-table-row-cell').eq(1).then($normalCell => {
+                    const normalBg = $normalCell.css('background-color');
+                    expect(fixedBg).eq(normalBg);
+                });
+            });
+            cy.get('.semi-table-cell-fixed-right').then($fixedCell => {
+                const fixedBg = $fixedCell.css('background-color');
+                cy.get('.semi-table-row-cell').eq(2).then($normalCell => {
+                    const normalBg = $normalCell.css('background-color');
+                    expect(fixedBg).eq(normalBg);
+                });
+            });
+        });
+    });
+
     it('row selection', () => {
         cy.visit('http://127.0.0.1:6006/iframe.html?id=table--selection-table&args=&viewMode=story');
         cy.get('.semi-table-row-head .semi-checkbox-inner-display').click();
@@ -319,4 +341,6 @@ describe('table', () => {
         cy.get('.test-th').should('have.attr', 'style').should('contain', 'background: blue');
         cy.get('.test-td').should('have.attr', 'style').should('contain', 'background: red');
     });
+
+
 });

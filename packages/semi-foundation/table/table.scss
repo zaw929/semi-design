@@ -270,7 +270,7 @@ $module: #{$prefix}-table;
                         &-left,
                         &-right {
                             background-image: linear-gradient(0deg, $color-table_body-bg-hover, $color-table_body-bg-hover);
-                            background-color: $color-table_body-bg-default;
+                            background-color: $color-table_cell-bg-hover;
 
                             // &::before {
                             //     background-color: $color-table_body-bg-hover;

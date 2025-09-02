@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Table } from '@douyinfe/semi-ui';
 
@@ -656,3 +656,36 @@ _RowSelectionRenderCell.story = {
 };
 
 export const RowBgDemo = () => <RowBg />;
+// FixedHoverBgDarkModeDemo: 演示 Table 暗色模式下 hover 行时，fixed与普通列背景色是否一致
+export const FixedHoverBgDarkModeDemo = () => {
+    // 设定暗色模式，通过设置 semi-design-dark 类（semi-design 官方暗色样式约定）
+    useEffect(() => {
+        document.body.classList.add('semi-design-dark');
+        return () => {
+            document.body.classList.remove('semi-design-dark');
+        };
+    }, []);
+
+    const columns = [
+        { title: '名称', dataIndex: 'name', width: 150, fixed: 'left' },
+        { title: '年龄', dataIndex: 'age', width: 100 },
+        { title: '地址', dataIndex: 'address', width: 200 },
+        { title: '', dataIndex: 'operate', width: 100, fixed: 'right', render: () => <span>操作</span> },
+    ];
+    const data = [
+        { key: '1', name: '张三', age: 28, address: '北京' },
+        { key: '2', name: '李四', age: 35, address: '上海' },
+        { key: '3', name: '王五', age: 42, address: '广州' }
+    ];
+
+    // 增加表格高度确保可视
+    const scroll = useMemo(() => ({ y: 240, x: 600 }), []);
+    return (
+        <Table
+            columns={columns}
+            dataSource={data}
+            scroll={scroll}
+        />
+    );
+};
+
