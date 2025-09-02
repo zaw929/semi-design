@@ -1,6 +1,6 @@
 import React, { createRef, useState } from 'react';
 import { Resizable } from '../../index';
-import { Toast, Button, Tag } from '@douyinfe/semi-ui'
+import { Toast, Button, Tag, Modal, Popover } from '@douyinfe/semi-ui'
 export default {
   title: 'Resizable'
 }
@@ -674,3 +674,77 @@ export const Single_grid = () => {
     </div >
   );
 }
+
+export const handler_Modal = () => {
+    const [text, setText] = useState('Drag to resize');
+    const [visible, setVisible] = useState(false);
+    const showDialog = () => {
+        setVisible(true);
+    };
+    const handleOk = () => {
+        setVisible(false);
+        console.log('Ok button clicked');
+    };
+    const handleCancel = () => {
+        setVisible(false);
+        console.log('Cancel button clicked');
+    };
+    const handleAfterClose = () => {
+        console.log('After Close callback executed');
+    };
+    return (
+        <div style={{ width: '1000px', height: '100px' }}>
+            <ResizeGroup direction="horizontal">
+                <ResizeItem
+                    style={{
+                        backgroundColor: 'rgba(var(--semi-grey-1), 1)',
+                        border: 'var(--semi-color-border) 1px solid',
+                    }}
+                    defaultSize={'400px'}
+                    min={'10%'}
+                    onChange={() => {
+                        setText('resizing');
+                    }}
+                    onResizeEnd={() => {
+                        setText('Drag to resize');
+                    }}
+                >
+                    <div style={{ marginLeft: '20%' }}>{text + ' min:10%'}</div>
+
+            <Button onClick={showDialog}>点我打开 modal</Button>
+            <Modal
+                title="基本对话框"
+                visible={visible}
+                onOk={handleOk}
+                afterClose={handleAfterClose} //>=1.16.0
+                onCancel={handleCancel}
+                closeOnEsc={true}
+            >
+                This is the content of a basic modal.
+                <br />
+                <div style={{ width: 100, height:500, background: 'red'}}></div>
+                More content...
+            </Modal>
+                </ResizeItem>
+                <ResizeHandler></ResizeHandler>
+                <ResizeItem
+                    style={{
+                        backgroundColor: 'rgba(var(--semi-grey-1), 1)',
+                        border: 'var(--semi-color-border) 1px solid',
+                    }}
+                    defaultSize={'0.5'}
+                    onChange={() => {
+                        setText('resizing');
+                    }}
+                >
+                    
+                    <div style={{ marginLeft: '20%' }}>{text}</div>
+                    <Popover  content="点我弹出 popover"><span style={{background: 'red'}}>点我弹出 popover</span></Popover>
+                </ResizeItem>
+                <ResizeHandler></ResizeHandler>
+                
+            </ResizeGroup>
+        </div>
+    );
+}
+
