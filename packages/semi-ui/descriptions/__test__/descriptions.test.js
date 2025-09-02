@@ -38,6 +38,23 @@ function renderDescriptions(props) {
 
 describe('Descriptions', () => {
 
+    // 新增用例：验证 column=1、layout=horizontal、全部项 hidden 时不渲染 <tr>
+    it('should NOT render empty tr when all items are hidden in horizontal layout with column=1', () => {
+        const hiddenData = [
+            { key: 'A', value: 'val', hidden: true },
+            { key: 'B', value: 'val', hidden: true }
+        ];
+        const desc = mount(
+            <Descriptions layout='horizontal' column={1} data={hiddenData} />
+        , {
+            attachTo: document.getElementById('container'),
+        });
+        const trs = document.querySelectorAll('tr');
+        // 不应渲染任何 tr
+        expect(trs.length).toBe(0);
+        desc.unmount();
+    });
+
     beforeEach(() => {
         const div = document.createElement('div');
         div.setAttribute('id', 'container');
