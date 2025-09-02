@@ -7,7 +7,15 @@
 
 describe('textarea', () => {
     beforeEach(() => {
+        // Default visit - autosize demo
         cy.visit('http://localhost:6006/iframe.html?id=input--text-area-autosize&args=&viewMode=story');
+    });
+
+    // 新增 maxCount 测试用例: 点击字数统计区域可使 textarea 获得焦点
+    it('should focus textarea when .semi-input-textarea-counter is clicked (maxCount)', () => {
+        cy.visit('http://localhost:6006/iframe.html?id=textarea--focus-on-counter-demo&viewMode=story');
+        cy.get('[data-cy=focus-counter-demo] .semi-input-textarea-counter').click();
+        cy.get('[data-cy=focus-counter-demo] .semi-input-textarea').should('have.focus');
     });
 
     it('autosize', () => {

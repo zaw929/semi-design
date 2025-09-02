@@ -208,6 +208,7 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
     };
 
     renderClearBtn() {
+
         const { showClear } = this.props;
         const displayClearBtn = this.foundation.isAllowClear();
         const clearCls = cls(`${prefixCls}-clearbtn`, {
@@ -224,6 +225,10 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
         return null;
     }
 
+    handleCounterClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        this.libRef.current?.focus();
+    };
+
     renderCounter() {
         let counter: React.ReactNode, current: number, total: number, countCls: string;
         const { showCounter, maxCount, getValueLength } = this.props;
@@ -236,7 +241,7 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
                 [`${prefixCls}-textarea-counter-exceed`]: current > total,
             });
             counter = (
-                <div className={countCls}>
+                <div className={countCls} onClick={this.handleCounterClick} tabIndex={-1}>
                     {current}
                     {total ? '/' : null}
                     {total}
