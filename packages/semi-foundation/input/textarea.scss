@@ -229,4 +229,19 @@ $module: #{$prefix}-input;
 
 }
 
+// --- 行号栏样式 ---
+.#{$module}-textarea-linenumber {
+  width: $width-input_textarea-linenumber;
+  background: $color-input_textarea-linenumber-bg;
+  color: $color-input_textarea-linenumber-text;
+  box-sizing: border-box;
+  border-right: 1px solid $color-input-border;
+  text-align: right;
+  user-select: none;
+  padding: 8px 4px 8px 0;
+  font-size: $font-input-base;
+  line-height: $font-input-base + 6px;
+  overflow: hidden;
+}
+
 @import "./rtl.scss";

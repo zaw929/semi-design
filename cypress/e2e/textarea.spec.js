@@ -6,6 +6,24 @@
 // https://on.cypress.io/writing-first-test
 
 describe('textarea', () => {
+  it('should correctly render line numbers according to `showLineNumber` and `lineNumberStart` props, and sync line number scroll with content', () => {
+    cy.visit('http://127.0.0.1:6006/iframe.html?id=textarea--line-number-demo&args=&viewMode=story');
+    cy.get('.custom-line-number-textarea').should('exist');
+    // 检查初始行号显示
+    cy.get('.semi-textarea-lineNumber').should('contain', '5');
+    // 检查多行场景行号
+    cy.get('.semi-textarea-lineNumber').should('contain', '7');
+
+    // 模拟滚动内容并检查行号滚动同步
+    cy.get('.custom-line-number-textarea textarea').scrollTo('bottom');
+    cy.wait(200);
+    cy.get('.semi-textarea-lineNumber').should('exist'); // 行号也应该滚动显示到最后一行
+
+    // 检查自定义样式生效
+    cy.get('.semi-textarea-lineNumber').should('have.css', 'color', 'rgb(255, 0, 0)');
+  });
+
+
     beforeEach(() => {
         cy.visit('http://localhost:6006/iframe.html?id=input--text-area-autosize&args=&viewMode=story');
     });

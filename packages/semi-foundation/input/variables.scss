@@ -47,6 +47,12 @@ $color-input_disabled-bg-default: var(--semi-color-disabled-fill); // 禁用输�
 $color-input_disabled-text-default: var(--semi-color-disabled-text); // 禁用输入框文字颜色
 
 $color-input_placeholder-text-default: var(--semi-color-text-2); // 输入框占位文字颜色
+
+// Textarea Line Number
+defaults
+$color-input_textarea-linenumber-bg: #f5f5f5; // 行号栏背景色
+$color-input_textarea-linenumber-text: #999; // 行号栏文字色
+
 $color-input_prefix-text-default: var(--semi-color-text-2); // 输入框 prefix 文字颜色
 $color-input-icon-default: var(--semi-color-text-2); // 输入框图标颜色
 $color-input-icon-hover: var(--semi-color-primary-hover); // 输入框图标颜色 - 悬浮
@@ -106,6 +112,11 @@ $spacing-textarea_counter-paddingBottom: 5px; // 多行文本字数统计底部�
 $spacing-textarea_counter-paddingLeft: 12px; // 多行文本字数统计左侧内边距
 
 $width-textarea-border: $border-thickness; // 多行文本描边宽度
+
+// Textarea Line Number Width
+defaults
+$width-input_textarea-linenumber: 40px; // 行号栏默认宽度
+
 $height-textarea_counter: 24px; // 多行文本字数统计最小高度
 $color-textarea-border-default: transparent; // 多行文本描边颜色
 $color-textarea-border-hover: $color-textarea-border-default; // 多行文本描边颜色 - 悬浮

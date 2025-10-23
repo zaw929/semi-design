@@ -30,6 +30,15 @@ export type AutosizeRow = {
 };
 
 export interface TextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, OmitTextareaAttr> {
+    /** 是否显示行号栏 */
+    showLineNumber?: boolean;
+    /** 行号起始值（默认1） */
+    lineNumberStart?: number;
+    /** 行号栏自定义类名 */
+    lineNumberClassName?: string;
+    /** 行号栏自定义样式 */
+    lineNumberStyle?: React.CSSProperties;
+
     autosize?: boolean | AutosizeRow;
     borderless?: boolean;
     placeholder?: string;
@@ -195,6 +204,11 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
     }
 
     componentDidUpdate(prevProps: TextAreaProps, prevState: TextAreaState) {
+        // 新增：高度同步，resize/自动高度场景
+        if (this.props.showLineNumber && this.libRef.current && this.lineNumberRef.current) {
+            this.lineNumberRef.current.style.height = `${this.libRef.current.offsetHeight}px`;
+        }
+
         if (
             (this.props.value !== prevProps.value || this.props.placeholder !== prevProps.placeholder) &&
             this.props.autosize
@@ -257,6 +271,9 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
             forwardRef.current = node;
         }
     };
+
+    // 新增：行号栏 Ref
+    lineNumberRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     render() {
         const {
@@ -321,19 +338,60 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
             (itemProps as any).minLength = stateMinLength;
         }
 
+        // 新增：行号栏 DOM 和滚动/高度同步
+        const { showLineNumber, lineNumberStart = 1, lineNumberClassName, lineNumberStyle } = this.props;
+        const textareaValue = value === null || value === undefined ? '' : value;
+        const lineCount = textareaValue.toString().split('\n').length;
+
         return (
             <div
                 className={wrapperCls}
-                style={style}
+                style={{ display: showLineNumber ? 'flex' : undefined, ...style }}
                 onMouseEnter={e => this.foundation.handleMouseEnter(e)}
                 onMouseLeave={e => this.foundation.handleMouseLeave(e)}
             >
+                {showLineNumber && (
+                    <div
+                        className={cls(`${prefixCls}-textarea-linenumber`, lineNumberClassName)}
+                        style={{
+                            width: 'var(--width-input_textarea-linenumber, 40px)',
+                            background: 'var(--color-input_textarea-linenumber-bg, #f5f5f5)',
+                            color: 'var(--color-input_textarea-linenumber-text, #999)',
+                            ...lineNumberStyle,
+                            height: this.libRef.current ? this.libRef.current.offsetHeight : undefined,
+                            overflow: 'hidden',
+                        }}
+                        ref={this.lineNumberRef}
+                    >
+                        {Array.from({ length: lineCount }).map((_, idx) => (
+                            <div key={idx}>{lineNumberStart + idx}</div>
+                        ))}
+                    </div>
+                )}
                 {autosize ? (
                     <ResizeObserver onResize={this.throttledResizeTextarea}>
-                        <textarea {...itemProps} ref={this.setRef} />
+                        <textarea
+                            {...itemProps}
+                            ref={this.setRef}
+                            onScroll={e => {
+                                if (showLineNumber && this.lineNumberRef.current) {
+                                    this.lineNumberRef.current.scrollTop = (e.target as HTMLTextAreaElement).scrollTop;
+                                }
+                                if (itemProps.onScroll) itemProps.onScroll(e);
+                            }}
+                        />
                     </ResizeObserver>
                 ) : (
-                    <textarea {...itemProps} ref={this.setRef} />
+                    <textarea
+                        {...itemProps}
+                        ref={this.setRef}
+                        onScroll={e => {
+                            if (showLineNumber && this.lineNumberRef.current) {
+                                this.lineNumberRef.current.scrollTop = (e.target as HTMLTextAreaElement).scrollTop;
+                            }
+                            if (itemProps.onScroll) itemProps.onScroll(e);
+                        }}
+                    />
                 )}
                 {this.renderClearBtn()}
                 {this.renderCounter()}
