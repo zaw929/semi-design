@@ -229,4 +229,26 @@ $module: #{$prefix}-input;
 
 }
 
+
+.#{$module}-textarea-lineNumberBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: $width-input_textarea-lineNumberBar;
+  height: 100%;
+  background: $color-input_textarea-lineNumberBar-bg;
+  color: $color-input_textarea-lineNumberBar-text;
+  text-align: right;
+  padding-right: $spacing-input_textarea-lineNumberBar-right;
+  box-sizing: border-box;
+  user-select: none;
+  font-family: inherit;
+  font-size: inherit;
+  z-index: 1;
+  /* 支持自定义行号 class & style */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 @import "./rtl.scss";

@@ -30,6 +30,15 @@ export type AutosizeRow = {
 };
 
 export interface TextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, OmitTextareaAttr> {
+    /** 是否显示行号 */
+    showLineNumber?: boolean;
+    /** 行号起始值，默认1 */
+    lineNumberStart?: number;
+    /** 行号栏自定义class名 */
+    lineNumberClassName?: string;
+    /** 行号栏自定义样式 */
+    lineNumberStyle?: React.CSSProperties;
+
     autosize?: boolean | AutosizeRow;
     borderless?: boolean;
     placeholder?: string;
@@ -62,6 +71,13 @@ export interface TextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTex
        Press enter + shift at the same time can start new line.
     */
     disabledEnterStartNewLine?: boolean
+}
+
+export interface TextAreaLineNumberProps {
+    lineNumberStart: number;
+    linesCount: number;
+    className?: string;
+    style?: React.CSSProperties;
 }
 
 export interface TextAreaState {
@@ -258,6 +274,36 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
         }
     };
 
+    private lineNumberBarRef: React.RefObject<HTMLDivElement> = React.createRef();
+
+    private renderLineNumberBar(): React.ReactNode {
+        const { value = '', rows = 4, lineNumberStart = 1, lineNumberClassName, lineNumberStyle } = this.props;
+        // 自动换行行数
+        const lineCount = value ? value.split('\n').length : rows;
+        const numbers = Array.from({ length: lineCount }, (_, i) => lineNumberStart + i);
+        const lineBarCls = cls(
+            `${prefixCls}-textarea-lineNumberBar`,
+            lineNumberClassName
+        );
+        return (
+            <div
+                ref={this.lineNumberBarRef}
+                className={lineBarCls}
+                style={lineNumberStyle}
+            >
+                {numbers.map(n => (
+                    <div key={n}>{n}</div>
+                ))}
+            </div>
+        );
+    }
+
+    private handleSyncScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+        if (this.lineNumberBarRef.current) {
+            this.lineNumberBarRef.current.scrollTop = (e.target as HTMLTextAreaElement).scrollTop;
+        }
+    };
+
     render() {
         const {
             autosize,
@@ -280,6 +326,10 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
             showClear,
             borderless,
             autoFocus,
+            showLineNumber, // 新增
+            lineNumberStart,
+            lineNumberClassName,
+            lineNumberStyle,
             ...rest
         } = this.props;
         const { isFocus, value, minLength: stateMinLength } = this.state;
@@ -321,6 +371,33 @@ class TextArea extends BaseComponent<TextAreaProps, TextAreaState> {
             (itemProps as any).minLength = stateMinLength;
         }
 
+        // 修改结构，横向布局支持行号栏
+        if (showLineNumber) {
+            return (
+                <div
+                    className={wrapperCls}
+                    style={style}
+                    onMouseEnter={e => this.foundation.handleMouseEnter(e)}
+                    onMouseLeave={e => this.foundation.handleMouseLeave(e)}
+                    style={{...style, display: 'flex', position: 'relative'}} // 横向布局; reset scss兼容
+                >
+                    <div style={{position: 'relative', height: '100%', flexShrink: 0}}>
+                        {this.renderLineNumberBar()}
+                    </div>
+                    <div style={{flex: 1, position: 'relative'}}>
+                        {autosize ? (
+                            <ResizeObserver onResize={this.throttledResizeTextarea}>
+                                <textarea {...itemProps} ref={this.setRef} onScroll={this.handleSyncScroll} />
+                            </ResizeObserver>
+                        ) : (
+                            <textarea {...itemProps} ref={this.setRef} onScroll={this.handleSyncScroll} />
+                        )}
+                        {this.renderClearBtn()}
+                        {this.renderCounter()}
+                    </div>
+                </div>
+            );
+        }
         return (
             <div
                 className={wrapperCls}

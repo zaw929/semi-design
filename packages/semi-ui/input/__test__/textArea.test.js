@@ -15,6 +15,69 @@ function getValueLength(str) {
 }
 
 describe('TextArea', () => {
+    // 行号功能：showLineNumber=false时不显示行号栏
+    it('should not display line number bar when showLineNumber is false', () => {
+        const wrapper = mount(<TextArea showLineNumber={false} value="line1\nline2" />);
+        expect(wrapper.find('.semi-input-textarea-lineNumberBar')).toHaveLength(0);
+    });
+
+    // 行号功能：showLineNumber=true时显示行号栏且与文本内容行数保持一致
+    it('should display line number bar with correct count when showLineNumber is true', () => {
+        const wrapper = mount(<TextArea showLineNumber value="a\nb\nc" />);
+        const lineNumberBar = wrapper.find('.semi-input-textarea-lineNumberBar');
+        expect(lineNumberBar).toHaveLength(1);
+        // 3 行
+        expect(lineNumberBar.find('div').children()).toHaveLength(3);
+        // 行号内容
+        expect(lineNumberBar.find('div').at(0).text()).toEqual('1');
+        expect(lineNumberBar.find('div').at(1).text()).toEqual('2');
+        expect(lineNumberBar.find('div').at(2).text()).toEqual('3');
+    });
+
+    // 行号功能：自定义起始行号
+    it('should start line number with lineNumberStart', () => {
+        const wrapper = mount(<TextArea showLineNumber value="x\ny" lineNumberStart={5} />);
+        const lineNumberBar = wrapper.find('.semi-input-textarea-lineNumberBar');
+        expect(lineNumberBar.find('div').at(0).text()).toEqual('5');
+        expect(lineNumberBar.find('div').at(1).text()).toEqual('6');
+    });
+
+    // 行号功能：支持自定义className和style
+    it('should apply custom className and style for lineNumberBar', () => {
+        const wrapper = mount(
+            <TextArea showLineNumber value="m\nn" lineNumberClassName="custom-bar" lineNumberStyle={{ background: 'yellow' }} />
+        );
+        const lineNumberBar = wrapper.find('.semi-input-textarea-lineNumberBar');
+        expect(lineNumberBar.hasClass('custom-bar')).toBe(true);
+        expect(lineNumberBar.prop('style').background).toBe('yellow');
+    });
+
+    // 行号功能：滚动联动，textarea滚动时同步
+    it('should sync lineNumberBar scroll with textarea scroll', () => {
+        // 模拟容器，确保 lineNumberBar 有 ref
+        const wrapper = mount(<TextArea showLineNumber value={"a\nb\nc\nd\ne\nf\ng"} rows={3} style={{ height: 60 }}/>
+        );
+        const textarea = wrapper.find('textarea');
+        const lineNumberBar = wrapper.find('.semi-input-textarea-lineNumberBar');
+        // 人工设置 scrollTop
+        textarea.getDOMNode().scrollTop = 20;
+        wrapper.find('textarea').simulate('scroll', { target: { scrollTop: 20 } });
+        expect(lineNumberBar.getDOMNode().scrollTop).toBe(20);
+    });
+
+    // 行号功能：常规功能不受影响（计数器、清空等）
+    it('should work with showCounter and showClear along with lineNumberBar', () => {
+        const wrapper = mount(
+            <TextArea showLineNumber showCounter maxCount={10} showClear defaultValue="semi design" />
+        );
+        // 行号栏存在
+        expect(wrapper.find('.semi-input-textarea-lineNumberBar')).toHaveLength(1);
+        // 清空按钮存在
+        expect(wrapper.find('.semi-input-clearbtn')).toHaveLength(1);
+        // 计数器存在
+        expect(wrapper.find('.semi-input-textarea-counter')).toHaveLength(1);
+    });
+
     it('TextArea with custom className & style', () => {
         const wrapper = mount(<TextArea className="test" style={{ color: 'red' }} />);
         expect(wrapper.hasClass('test')).toEqual(true);

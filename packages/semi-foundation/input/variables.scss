@@ -117,4 +117,8 @@ $height-textarea-default: 32px; // 多行文本 clear 图标的高度
 $spacing-textarea_withShowClear-paddingRight: 36px; // 多行文本设置 showClear 后的右内边距
 $spacing-textarea-icon-right: $spacing-extra-tight;// 多行文本 clear 图标的右边距
 
+$width-input_textarea-lineNumberBar: 32px; // 行号栏宽度
+$color-input_textarea-lineNumberBar-bg: var(--semi-color-fill-0); // 行号栏背景色
+$color-input_textarea-lineNumberBar-text: var(--semi-color-text-2); // 行号栏文字色
+$spacing-input_textarea-lineNumberBar-right: 8px; // 行号栏与textarea内容分割的间距
 
