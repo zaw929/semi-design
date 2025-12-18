@@ -58,6 +58,10 @@ class TabBar extends React.Component<TabBarProps, TabBarState> {
     componentDidMount() {
         this.setState({
             uuid: getUuidv4(),
+        }, () => {
+            if (this.props.collapsible) {
+                this.scrollActiveTabItemIntoView();
+            }
         });
     }
 
@@ -227,7 +231,7 @@ class TabBar extends React.Component<TabBarProps, TabBarState> {
         const icon = index === 0 ? <IconChevronLeft/> : <IconChevronRight/>;
         const overflowNode = this.renderCollapse(item, icon, pos);
         if (this.props.renderArrow) {
-            return this.props.renderArrow(item, pos, ()=>this.handleArrowClick(item, pos), overflowNode);
+            return this.props.renderArrow(item, pos, () => this.handleArrowClick(item, pos), overflowNode);
         }
         return overflowNode;
     });
@@ -248,9 +252,9 @@ class TabBar extends React.Component<TabBarProps, TabBarState> {
                 renderMode="scroll"
                 className={`${cssClasses.TABS_BAR}-overflow-list`}
                 visibleItemRenderer={this.renderTabItem as any}
-                onVisibleStateChange={(visibleMap)=>{
+                onVisibleStateChange={(visibleMap) => {
                     const visibleMapWithItemKey: Map<string, boolean> = new Map();
-                    visibleMap.forEach((v, k )=>{
+                    visibleMap.forEach((v, k) => {
                         visibleMapWithItemKey.set(this._getItemKeyByBarItemKey(k), v);
                     });
                     this.props.onVisibleTabsChange?.(visibleMapWithItemKey);
